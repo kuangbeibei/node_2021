@@ -1,0 +1,21 @@
+{
+  "name": "kk-hs",
+  "version": "1.0.0",
+  "description": "- http-server",
+  "bin": "./bin/www",
+  "main": "1.http-server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "chalk": "^4.1.0",
+    "commander": "^7.0.0",
+    "ejs": "^3.1.5",
+    "jwt-simple": "^0.5.6",
+    "mime": "^2.5.0",
+    "uuid": "^8.3.2"
+  }
+}

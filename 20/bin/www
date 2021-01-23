@@ -1,0 +1,46 @@
+#! /usr/bin/env node
+const {program} = require('commander');           // 在使用了命令行管家工具之后，默认只有一个命令是 --help，其他的需要自己配置
+const chalk = require('chalk');
+const config = require('./config');             // 写服务，该端口号，指定目录，增加缓存（文件是否需要缓存）...
+
+const Server = require('../src/server');
+
+program.name('kk');
+
+let defaultConfig = {};
+let exampleList = [];
+Object.entries(config).forEach(([key, value]) => {
+    defaultConfig[key] = value.default;
+    exampleList.push(value.usage);
+    program.option(value.option, value.descriptor)  // 配置 --help里面的展示项
+})
+
+program.on('--help', () => {
+    console.log(`\r\n Examples:`)
+    exampleList.forEach(line => {
+        console.log(`   ${chalk.green(line)}`)
+    })
+})
+
+// 这句话要放在最后面执行
+program.parse(process.argv)
+
+function mergeOptions(defaultConfig, newConfig) {
+    newConfig = newConfig._optionValues;
+    let options = {};
+    for (let key in defaultConfig) {
+        if (!(key in newConfig)) {
+            options[key] = defaultConfig[key]
+        } else {
+            // 在这里还可以校验newConfig的配置是否符合预期
+            options[key] = newConfig[key]
+        }
+    }
+    return options;
+}
+
+
+let options = mergeOptions(defaultConfig, program);
+
+let server = new Server(options);
+server.start();

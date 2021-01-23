@@ -1,0 +1,1 @@
+// 把node的api，比如fs里面的方法转化成promise的形式

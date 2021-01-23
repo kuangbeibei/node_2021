@@ -1,0 +1,15 @@
+{
+  "name": "21",
+  "version": "1.0.0",
+  "description": "- express 及原理 express是一个http服务的框架，把node的http进行了封装 express的功能比较全面，koa的功能比较小巧 express完全是基于回调的方式去编写代码",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.17.1"
+  }
+}

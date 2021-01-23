@@ -1,0 +1,6 @@
+- express 及原理
+express是一个http服务的框架，把node的http进行了封装
+express的功能比较全面，koa的功能比较小巧
+express完全是基于回调的方式去编写代码
+
+webpack内部全部集成express
