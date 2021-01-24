@@ -22,6 +22,20 @@ Router.prototype.route = function(path) {
     return route
 }
 
+// 无论是路由还是中间件，前提是路由必须匹配。路由还必须匹配method方法。
+Router.prototype.use = function(path, ...handlers) {        // use就是layer对应一个由具体handler组成的handlers，而不是layer对应一个route。
+    if (!handlers[0]) { // 如果只传了一个回调函数，没有写路径
+        handlers.push(path);    // 这里的path只是的传递的唯一的一个参数，即是函数
+        path = "/";
+    }
+
+    handlers.forEach(handler => {
+        let layer = new Layer(path, handler);
+        layer.route = undefined; // 不设置也就是undefined，这里是显示设置出来
+        this.stack.push(layer);
+    })
+}
+
 
 methods.forEach(method => {
     Router.prototype[method] = function(path, handlers) {
@@ -36,10 +50,19 @@ Router.prototype.handler = function (req, res, done) {
 
     const next = () => {
         let layer = this.stack[index++];
+        let {pathname} = url.parse(req.url);
+        console.log('pathname',pathname)
         if (layer) {
-            let {pathname} = url.parse(req.url)
-            if (layer.match(pathname) && layer.route.methods[req.method.toLowerCase()]) {
-                layer.handle_request(req, res, next); // 这里的handle_request内部调用的handler就是route.dispatch
+            if (layer.match(pathname)) {
+                if (!layer.route) {
+                    layer.handle_request(req, res, next); // 中间件
+                } else {
+                    if (layer.route.methods[req.method.toLowerCase()]) {
+                        layer.handle_request(req, res, next); // 这里的handle_request内部调用的handler就是route.dispatch
+                    } else {
+                        next()
+                    }
+                }
             } else {
                 next()
             }

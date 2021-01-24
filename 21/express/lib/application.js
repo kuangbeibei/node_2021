@@ -28,6 +28,11 @@ methods.forEach(method => {
 })
 
 
+Application.prototype.use = function(path, ...handlers) {
+    this.layze_route();
+    this._router.use(...arguments)
+}
+
 
 Application.prototype.listen = function (...args) {
     const server = http.createServer((req, res) => {
