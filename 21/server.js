@@ -25,6 +25,10 @@ app.get("/", (req, res) => {
     res.end('home ok')
 })
 
+// app.post("/", (req, res) => {
+//     res.end('home post ok')
+// })
+
 app.listen(3000, () => {
     console.log('start')
 })

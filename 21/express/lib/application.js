@@ -8,17 +8,30 @@
 
 const http = require('http');
 const Router = require("./router");
+const methods = require("methods");   // 安装express模块自动安装了这个第三方库
 
 function Application() {
-    this._router = new Router();   // express原生就支持路由系统，就是这么来的。每次express()执行都有独立的路由系统
+    // this._router = new Router();   // 懒加载路由，并不是一创建app就配置一个路由，调用请求方法或者listen的时候再创建
 }
 
-Application.prototype.get = function (path, ...handlers) {
-    this._router.get(path, handlers)
+Application.prototype.layze_route = function() {
+    if (!this._router) {
+        this._router = new Router()
+    }
 }
+
+methods.forEach(method => {
+    Application.prototype[method] = function (path, ...handlers) {
+        this.layze_route();
+        (this._router[method])(path, handlers)
+    }
+})
+
+
 
 Application.prototype.listen = function (...args) {
     const server = http.createServer((req, res) => {
+        this.layze_route();
 
         function done(r) {
             // 如果路由系统处理不了，交给应用来处理

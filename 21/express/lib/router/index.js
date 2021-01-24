@@ -3,6 +3,7 @@
  */
 
 const url = require('url');
+const methods = require('methods');
 const Layer = require('./layer');
 const Route = require('./route');
 
@@ -21,15 +22,13 @@ Router.prototype.route = function(path) {
     return route
 }
 
-// 就是app.get
-Router.prototype.get = function(path, handlers) {
-    let route = this.route(path);   // 构建两个栈
-    route.get(handlers)
-}
 
-Router.prototype.post = function() {
-    
-}
+methods.forEach(method => {
+    Router.prototype[method] = function(path, handlers) {
+        let route = this.route(path);   // 构建两个栈
+        (route[method])(handlers)
+    }
+})
 
 Router.prototype.handler = function (req, res, done) {
     
@@ -39,8 +38,8 @@ Router.prototype.handler = function (req, res, done) {
         let layer = this.stack[index++];
         if (layer) {
             let {pathname} = url.parse(req.url)
-            if (layer.path === pathname) {
-                layer.route.dispatch(req, res, next)
+            if (layer.match(pathname) && layer.route.methods[req.method.toLowerCase()]) {
+                layer.handle_request(req, res, next); // 这里的handle_request内部调用的handler就是route.dispatch
             } else {
                 next()
             }
