@@ -21,10 +21,10 @@ methods.forEach(method => {
 Route.prototype.dispatch = function(req, res, out) {     // 让用户定义的handlers依次执行
     let index = 0;
 
-    const next = () => {
+    const next = (err) => {
+        if (err) return out(err);
         let layer = this.stack[index++];
         if (layer) {
-            console.log('exec');
             if (layer.method === req.method.toLowerCase()) {
                 layer.handle_request(req, res, next)
             } else {

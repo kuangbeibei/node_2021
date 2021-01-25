@@ -2,14 +2,14 @@ const express = require("./express");
 
 const app = express();
 
-app.use((req, rex, next) => {
+app.use((req, res, next) => {
     let arr = [];
     req.on('data', chunk => {
         arr.push(chunk)
     });
     req.on('end', () => {
         req.body = Buffer.concat(arr).toString();   // 这样每个请求上都可以获取到req.body这个属性
-        next()
+        next('错啦')
     })
 })
 
@@ -25,7 +25,8 @@ app.use((req, res, next) => {
 
 app.post("/", (req, res, next) => {
     console.log('req.body',req.body)
-    res.send(req.body)
+    res.send(req.body);
+    next()
 })
 
 app.get("/", (req, res, next) => {
@@ -33,6 +34,11 @@ app.get("/", (req, res, next) => {
         a: 1,
         b: 2
     })
+})
+
+app.use(function(err, req, res, next) {
+    res.setHeader('Content-Type', "text/plain; charset=utf8");
+    res.end(err)
 })
 
 app.listen(3000, () => {
